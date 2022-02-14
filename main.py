@@ -12,7 +12,7 @@ MAX_POINTS = 962
 POINTS = 0
 
 
-template = cv.imread("./templates/test1.png")
+template = cv.imread("./templates/snowflake.png")
 template = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
 template = cv.Canny(template, 50, 200)
 
