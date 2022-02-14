@@ -3,9 +3,9 @@ import cv2 as cv
 import keyboard
 import pyautogui
 import mouse
-from parts.snowflake import find_snowflake_click_pos
-from parts.middle_monster import check_middle_monster
-from parts.left_monster import check_left_monster
+from bot.snowflake import find_snowflake_click_pos
+from bot.middle_monster import check_middle_monster
+from bot.left_monster import check_left_monster
 
 
 MAX_POINTS = 950
