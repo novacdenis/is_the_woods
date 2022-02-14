@@ -1,14 +1,14 @@
-from time import sleep, time
 import cv2 as cv
 import keyboard
 import pyautogui
 import mouse
+from time import sleep
 from bot.snowflake import find_snowflake_click_pos
 from bot.middle_monster import check_middle_monster
 from bot.left_monster import check_left_monster
 
 
-MAX_POINTS = 950
+MAX_POINTS = 962
 POINTS = 0
 
 
@@ -39,6 +39,21 @@ def game_over():
         print("MAX POINTS EXCEEDED")
 
 
+def task1():
+    find_snowflake_click_pos(
+        template,
+        600,
+        350,
+        update_poits,
+        POINTS,
+    )
+
+
+def task2():
+    check_middle_monster(update_poits)
+    check_left_monster(update_poits)
+
+
 def start_game():
     while keyboard.is_pressed("q") == False:
         pixel = pyautogui.pixel(1168, 937)
@@ -48,29 +63,11 @@ def start_game():
             break
 
         if pixel[0] == 121 and pixel[1] == 2 and pixel[2] == 139:
-            print(POINTS)
             game_over()
             break
 
-        find_snowflake_click_pos(
-            template,
-            600,
-            350,
-            update_poits,
-            POINTS,
-        )
-
-        check_middle_monster(update_poits)
-
-        find_snowflake_click_pos(
-            template,
-            600,
-            350,
-            update_poits,
-            POINTS,
-        )
-
-        check_left_monster(update_poits)
+        task1()
+        task2()
 
 
 if __name__ == "__main__":

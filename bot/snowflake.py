@@ -62,7 +62,7 @@ def find_snowflake_click_pos(template, offsetX, offsetY, update_poits, points):
         current_screen = sct.grab(monitor=(560, 300, 2000, 1200))
         current_pos = find_snowflake(current_screen, template, snowflake_w, snowflake_h)
 
-        if points > 800 and current_pos:
+        if points > 780 and current_pos:
             action(current_pos["x"] + offsetX, current_pos["y"] + offsetY, slp=True)
 
         if current_pos:
