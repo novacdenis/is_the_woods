@@ -46,7 +46,7 @@ def find_snowflake(screen, template, w, h):
         return {"x": rect_x, "y": rect_y}
 
 
-def action(x, y, slp=False):
+def snowflake_action(x, y, slp=False):
     mouse.move(x, y)
     mouse.click(button="left")
     sleep(0.01)
@@ -55,7 +55,7 @@ def action(x, y, slp=False):
         sleep(0.02)
 
 
-def find_snowflake_click_pos(template, offsetX, offsetY, update_poits, points):
+def find_snowflake_click_pos(template, offsetX, offsetY, points):
     (snowflake_h, snowflake_w) = template.shape[:2]
 
     with mss() as sct:
@@ -63,7 +63,10 @@ def find_snowflake_click_pos(template, offsetX, offsetY, update_poits, points):
         current_pos = find_snowflake(current_screen, template, snowflake_w, snowflake_h)
 
         if points > 780 and current_pos:
-            action(current_pos["x"] + offsetX, current_pos["y"] + offsetY, slp=True)
+            snowflake_action(
+                current_pos["x"] + offsetX, current_pos["y"] + offsetY, True
+            )
+            return True
 
         if current_pos:
             sleep(0.009)
@@ -71,5 +74,7 @@ def find_snowflake_click_pos(template, offsetX, offsetY, update_poits, points):
             next_pos = find_snowflake(next_screen, template, snowflake_w, snowflake_h)
 
             if next_pos and next_pos["x"] == current_pos["x"]:
-                update_poits(1)
-                action(current_pos["x"] + offsetX, current_pos["y"] + offsetY)
+                snowflake_action(current_pos["x"] + offsetX, current_pos["y"] + offsetY)
+                return True
+
+        return False
