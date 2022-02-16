@@ -1,0 +1,6 @@
+keyboard
+mouse
+opencv-python
+pyautogui
+imutils
+mss

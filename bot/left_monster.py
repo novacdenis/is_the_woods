@@ -1,6 +1,5 @@
 import pyautogui
 import mouse
-import keyboard
 from time import sleep
 
 
