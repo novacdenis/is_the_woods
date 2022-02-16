@@ -11,7 +11,7 @@ LOW = 3
 MEDIUM = 2
 HIGH = 1
 
-template = cv.imread("./templates/snowflake.png")
+template = cv.imread("./templates/fulg_small.png")
 template = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
 template = cv.Canny(template, 50, 200)
 
@@ -28,8 +28,8 @@ class Game:
     def detect_snowflake(self):
         snowflake = find_snowflake_click_pos(
             template,
-            600,
-            350,
+            316,  # 600
+            173,  # 350
             self.score,
         )
 

@@ -3,6 +3,7 @@ import cv2 as cv
 import numpy as np
 import imutils
 import mouse
+import keyboard
 from time import sleep
 
 
@@ -59,7 +60,9 @@ def find_snowflake_click_pos(template, offsetX, offsetY, points):
     (snowflake_h, snowflake_w) = template.shape[:2]
 
     with mss() as sct:
-        current_screen = sct.grab(monitor=(560, 300, 2000, 1200))
+        current_screen = sct.grab(
+            monitor=(241, 123, 1677, 1011)
+        )  # 2K: 560, 300, 2000, 1200
         current_pos = find_snowflake(current_screen, template, snowflake_w, snowflake_h)
 
         if points > 780 and current_pos:
@@ -70,7 +73,7 @@ def find_snowflake_click_pos(template, offsetX, offsetY, points):
 
         if current_pos:
             sleep(0.009)
-            next_screen = sct.grab(monitor=(560, 300, 2000, 1200))
+            next_screen = sct.grab(monitor=(241, 123, 1677, 1011))
             next_pos = find_snowflake(next_screen, template, snowflake_w, snowflake_h)
 
             if next_pos and next_pos["x"] == current_pos["x"]:
@@ -78,3 +81,14 @@ def find_snowflake_click_pos(template, offsetX, offsetY, points):
                 return True
 
         return False
+
+
+if __name__ == "__main__":
+    while keyboard.is_pressed("q") == False:
+        if keyboard.is_pressed("s"):
+            with mss() as sct:
+                next_screen = sct.grab(monitor=(241, 123, 1677, 1011))
+                next_screen = np.array(next_screen)
+
+                cv.imshow(",", next_screen)
+                cv.waitKey(0)
