@@ -54,7 +54,7 @@ class Game:
                 break
 
     def restart_game(self):
-        mouse.move(1164, 885)
+        mouse.move(849, 706)  # 1164, 885
         sleep(0.1)
         mouse.press()
         sleep(0.1)
@@ -70,9 +70,10 @@ class Game:
 
     def analyze_screen(self):
         while keyboard.is_pressed("q") == False:
-            pixel = pyautogui.pixel(1168, 937)
+            pixel = pyautogui.pixel(846, 758)  # 1168, 937
 
-            if pixel[0] == 121 and pixel[1] == 2 and pixel[2] == 139:
+            # 2
+            if pixel[0] == 121 and pixel[1] == 1 and pixel[2] == 139:
                 self.game_over()
                 break
 
@@ -86,3 +87,5 @@ class Game:
 
 if __name__ == "__main__":
     game = Game()
+    # while keyboard.is_pressed("q") == False:
+    # print(pyautogui.pixel(846, 758))
