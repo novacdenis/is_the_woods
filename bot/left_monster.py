@@ -5,19 +5,20 @@ import keyboard
 
 
 def left_monster_action():
-    mouse.move(484, 572)  # 803, 670
+    mouse.move(488, 497)
     mouse.press(button="left")
-    sleep(0.01)
-    pyautogui.moveTo(484, 812, 0.17)
-    sleep(0.01)
+    sleep(0.005)
+    mouse.move(488, 680, duration=0.05)
+    sleep(0.005)
+    mouse.move(488, 880, duration=0.05)
+    sleep(0.002)
     mouse.release(button="left")
 
 
 def check_left_monster():
-    pixel = pyautogui.pixel(467, 585)  # 803, 670
+    pixel = pyautogui.pixel(488, 497)
 
-    if pixel[0] in range(90, 189) and pixel[1] in range(133, 221):
-        left_monster_action()
+    if pixel[0] in range(149, 161) and pixel[1] in range(221, 231):
         return True
 
     return False
@@ -25,4 +26,4 @@ def check_left_monster():
 
 if __name__ == "__main__":
     while keyboard.is_pressed("q") == False:
-        print(pyautogui.pixel(467, 585))
+        print(pyautogui.pixel(488, 497))

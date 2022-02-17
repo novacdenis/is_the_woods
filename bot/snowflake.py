@@ -3,11 +3,18 @@ import cv2 as cv
 import numpy as np
 import imutils
 import mouse
-import keyboard
-from time import sleep
+from time import sleep, time
+import os
+
+template = cv.imread(os.path.abspath("templates/snowflake.png"))
+template = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
+template = cv.Canny(template, 50, 200)
+H, W = template.shape[:2]
+
+OFF_X, OFF_Y = 285, 176
 
 
-def find_snowflake(screen, template, w, h):
+def find_snowflake(screen):
     img = screen
     img = np.array(img)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -19,14 +26,12 @@ def find_snowflake(screen, template, w, h):
         resized = imutils.resize(gray, width=int(gray.shape[1] * scale))
         r = gray.shape[1] / float(resized.shape[1])
 
-        if resized.shape[0] < h or resized.shape[1] < w:
+        if resized.shape[0] < H or resized.shape[1] < W:
             break
 
         edged = cv.Canny(resized, 50, 200)
         result = cv.matchTemplate(edged, template, cv.TM_CCOEFF)
         (_, maxVal, _, maxLoc) = cv.minMaxLoc(result)
-
-        # print(f"[{count}, {maxVal}],")
 
         if found is None or maxVal > found[0]:
             found = (maxVal, maxLoc, r)
@@ -37,7 +42,7 @@ def find_snowflake(screen, template, w, h):
     if found[0] > 6225825:
         (_, maxLoc, r) = found
         (startX, startY) = (int(maxLoc[0] * r), int(maxLoc[1] * r))
-        (endX, endY) = (int((maxLoc[0] + w) * r), int((maxLoc[1] + h) * r))
+        (endX, endY) = (int((maxLoc[0] + W) * r), int((maxLoc[1] + H) * r))
 
         rect_width = (startX - endX) / 2
         rect_height = (startY - endY) / 2
@@ -47,48 +52,39 @@ def find_snowflake(screen, template, w, h):
         return {"x": rect_x, "y": rect_y}
 
 
-def snowflake_action(x, y, slp=False):
-    mouse.move(x, y)
+def snowflake_action(args):
+    """
+    args[0] = x
+    args[1] = y
+    args[2] = sleep
+    """
+    mouse.move(args[0], args[1])
     mouse.click(button="left")
-    sleep(0.01)
 
-    if slp == True:
-        sleep(0.02)
+    if args[2] == True:
+        sleep(0.03)
 
 
-def find_snowflake_click_pos(template, offsetX, offsetY, points):
-    (snowflake_h, snowflake_w) = template.shape[:2]
-
+def find_snowflake_click_pos(game_start_time):
     with mss() as sct:
-        current_screen = sct.grab(
-            monitor=(241, 123, 1677, 1011)
-        )  # 2K: 560, 300, 2000, 1200
-        current_pos = find_snowflake(current_screen, template, snowflake_w, snowflake_h)
+        current_screen = sct.grab(monitor=(241, 123, 1677, 1011))
+        current_pos = find_snowflake(current_screen)
 
-        if points > 780 and current_pos:
-            snowflake_action(
-                current_pos["x"] + offsetX, current_pos["y"] + offsetY, True
-            )
+        current_played_time = time() - game_start_time
+
+        if current_played_time > 270 and current_pos:
+            snowflake_action((current_pos["x"] + OFF_X, current_pos["y"] + OFF_Y, True))
             return True
 
         if current_pos:
             sleep(0.009)
             next_screen = sct.grab(monitor=(241, 123, 1677, 1011))
-            next_pos = find_snowflake(next_screen, template, snowflake_w, snowflake_h)
+            next_pos = find_snowflake(next_screen)
 
             if next_pos and next_pos["x"] == current_pos["x"]:
-                snowflake_action(current_pos["x"] + offsetX, current_pos["y"] + offsetY)
+                snowflake_action(
+                    (current_pos["x"] + OFF_X, current_pos["y"] + OFF_Y, False)
+                )
                 return True
 
         return False
-
-
-if __name__ == "__main__":
-    while keyboard.is_pressed("q") == False:
-        if keyboard.is_pressed("s"):
-            with mss() as sct:
-                next_screen = sct.grab(monitor=(241, 123, 1677, 1011))
-                next_screen = np.array(next_screen)
-
-                cv.imshow(",", next_screen)
-                cv.waitKey(0)

@@ -7,14 +7,13 @@ import keyboard
 def middle_monster_action():
     mouse.move(962, 733)
     mouse.click(button="left")
-    sleep(0.01)
+    sleep(0.001)
 
 
 def check_middle_monster():
-    pixel = pyautogui.pixel(962, 733)  # 1279, 917
+    pixel = pyautogui.pixel(962, 733)
 
-    if pixel[0] in range(58, 79):  # 44, 52
-        middle_monster_action()
+    if pixel[0] in range(58, 79):
         return True
 
     return False

@@ -1,49 +1,38 @@
-from time import sleep
+from time import sleep, time
 import keyboard
 import pyautogui
 import mouse
-import cv2 as cv
+import json
 from bot.snowflake import find_snowflake_click_pos
-from bot.middle_monster import check_middle_monster
-from bot.left_monster import check_left_monster
+from bot.middle_monster import check_middle_monster, middle_monster_action
+from bot.left_monster import check_left_monster, left_monster_action
 
 LOW = 3
 MEDIUM = 2
 HIGH = 1
-
-template = cv.imread("./templates/fulg_small.png")
-template = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
-template = cv.Canny(template, 50, 200)
+ULTRA = 0
 
 
 class Game:
-    score = 0
-    max_score = 0
+    actions = []
+    start_time = None
+    loop_average_time = 0
+    loops_count = 0
 
     def __init__(self):
-        user_max_score = input("\nEnter max score: ")
-        self.max_score = int(user_max_score)
         self.start_game()
 
     def detect_snowflake(self):
-        snowflake = find_snowflake_click_pos(
-            template,
-            316,  # 600
-            173,  # 350
-            self.score,
-        )
-
-        if snowflake:
-            self.score += 1
+        snowflake = find_snowflake_click_pos(self.start_time)
 
     def detect_monsters(self):
         middle_mon = check_middle_monster()
         left_mon = check_left_monster()
 
         if middle_mon:
-            self.score += 2
+            self.actions.append({"prt": LOW, "fn": middle_monster_action})
         if left_mon:
-            self.score += 2
+            self.actions.append({"prt": MEDIUM, "fn": left_monster_action})
 
     def start_game(self):
         print("\nPress 's' to start game")
@@ -54,7 +43,7 @@ class Game:
                 break
 
     def restart_game(self):
-        mouse.move(849, 706)  # 1164, 885
+        mouse.move(849, 706)
         sleep(0.1)
         mouse.press()
         sleep(0.1)
@@ -62,30 +51,67 @@ class Game:
         sleep(3)
 
     def game_over(self):
-        if self.score < self.max_score:
-            print("\nGame over. Score", self.score)
-            self.score = 0
-            self.restart_game()
-            self.analyze_screen()
+        end_time = time()
+
+        played_time = end_time - self.start_time
+        loop_average_time = self.loop_average_time / self.loops_count
+
+        self.update_report_file(played_time, loop_average_time)
+
+        print("\nPlayed Time: {played_time}s".format(played_time))
+        print("Loop average time: {loop_average_time}s".format(loop_average_time))
+        print("\nPress 'r' to restart game or press 'q' to exit")
+
+        while keyboard.is_pressed("q") == False:
+            if keyboard.is_pressed("r"):
+                self.restart_game()
+                self.analyze_screen()
+
+    def start_actions(self):
+        sorted_action = sorted(self.actions, key=lambda i: i["prt"])
+
+        for action in sorted_action:
+            action["fn"]()
+
+        self.actions.clear()
+
+    def update_report_file(self, total, loop):
+        with open("report.json", "r") as report_file:
+            data = json.load(report_file)
+
+        data.append({"total": total, "loop": loop})
+
+        with open("report.json", "w") as report_file:
+            json.dump(data, report_file)
 
     def analyze_screen(self):
-        while keyboard.is_pressed("q") == False:
-            pixel = pyautogui.pixel(846, 758)  # 1168, 937
+        self.start_time = time()
+        self.loops_count = 0
+        self.loop_average_time = 0
 
-            # 2
+        while True:
+            if keyboard.is_pressed("q"):
+                self.game_over()
+                break
+
+            loop_start_time = time()
+
+            pixel = pyautogui.pixel(846, 758)
+
             if pixel[0] == 121 and pixel[1] == 1 and pixel[2] == 139:
                 self.game_over()
                 break
 
-            if int(self.score) >= int(self.max_score):
-                print("\nGame finished")
-                break
-
             self.detect_snowflake()
             self.detect_monsters()
+            self.detect_snowflake()
+            self.start_actions()
+
+            loop_end_time = time()
+
+            self.loop_average_time += loop_end_time - loop_start_time
+            self.loops_count += 1
 
 
 if __name__ == "__main__":
     game = Game()
-    # while keyboard.is_pressed("q") == False:
-    # print(pyautogui.pixel(846, 758))
