@@ -58,8 +58,8 @@ class Game:
 
         self.update_report_file(played_time, loop_average_time)
 
-        print("\nPlayed Time: {played_time}s".format(played_time))
-        print("Loop average time: {loop_average_time}s".format(loop_average_time))
+        print("\nPlayed Time: {}s".format(played_time))
+        print("Loop average time: {}s".format(loop_average_time))
         print("\nPress 'r' to restart game or press 'q' to exit")
 
         while keyboard.is_pressed("q") == False:
