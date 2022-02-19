@@ -1,8 +1,10 @@
+import os
 from time import sleep, time
 import keyboard
 import pyautogui
 import mouse
 import json
+from utils import clear_onsole
 from bot.snowflake import find_snowflake_click_pos
 from bot.middle_monster import check_middle_monster, middle_monster_action
 from bot.left_monster import check_left_monster, left_monster_action
@@ -35,7 +37,10 @@ class Game:
             self.actions.append({"prt": MEDIUM, "fn": left_monster_action})
 
     def start_game(self):
-        print("\nPress 's' to start game")
+        clear_onsole()
+
+        print("Press 's' to start game or press 'q' to exit")
+
         while keyboard.is_pressed("q") == False:
             if keyboard.read_key() == "s":
                 print("\nGame started. Press 'q' to exit & stop game")
@@ -56,16 +61,21 @@ class Game:
         played_time = end_time - self.start_time
         loop_average_time = self.loop_average_time / self.loops_count
 
-        self.update_report_file(played_time, loop_average_time)
+        if played_time > 200:
+            self.update_report_file(played_time, loop_average_time)
 
         print("\nPlayed Time: {}s".format(played_time))
         print("Loop average time: {}s".format(loop_average_time))
-        print("\nPress 'r' to restart game or press 'q' to exit")
 
-        while keyboard.is_pressed("q") == False:
-            if keyboard.is_pressed("r"):
-                self.restart_game()
-                self.analyze_screen()
+        if played_time < 300:
+            self.restart_game()
+        else:
+            print("\nPress 'r' to restart game or press 'q' to exit")
+
+            while keyboard.is_pressed("q") == False:
+                if keyboard.is_pressed("r"):
+                    self.restart_game()
+                    self.analyze_screen()
 
     def start_actions(self):
         sorted_action = sorted(self.actions, key=lambda i: i["prt"])
@@ -90,8 +100,14 @@ class Game:
         self.loop_average_time = 0
 
         while True:
+            loop_start_time = time()
+
             if keyboard.is_pressed("q"):
                 self.game_over()
+                break
+
+            if loop_start_time - self.start_time > 345:
+                print("I think this is enough")
                 break
 
             loop_start_time = time()

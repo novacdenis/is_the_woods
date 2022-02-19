@@ -60,9 +60,10 @@ def snowflake_action(args):
     """
     mouse.move(args[0], args[1])
     mouse.click(button="left")
+    sleep(0.01)
 
     if args[2] == True:
-        sleep(0.035)
+        sleep(0.025)
 
 
 def find_snowflake_click_pos(game_start_time):
