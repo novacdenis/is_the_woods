@@ -26,4 +26,8 @@ def check_left_monster():
 
 if __name__ == "__main__":
     while keyboard.is_pressed("q") == False:
-        print(pyautogui.pixel(488, 497))
+        if keyboard.is_pressed("s"):
+            while keyboard.is_pressed("r") == False:
+                pixel = pyautogui.pixel(488, 497)
+                print(pixel)
+            break

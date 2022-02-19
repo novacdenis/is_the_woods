@@ -11,7 +11,7 @@ template = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
 template = cv.Canny(template, 50, 200)
 H, W = template.shape[:2]
 
-OFF_X, OFF_Y = 285, 176
+OFF_X, OFF_Y = 290, 176
 
 
 def find_snowflake(screen):
@@ -62,7 +62,7 @@ def snowflake_action(args):
     mouse.click(button="left")
 
     if args[2] == True:
-        sleep(0.03)
+        sleep(0.035)
 
 
 def find_snowflake_click_pos(game_start_time):
@@ -72,7 +72,7 @@ def find_snowflake_click_pos(game_start_time):
 
         current_played_time = time() - game_start_time
 
-        if current_played_time > 270 and current_pos:
+        if current_played_time > 295 and current_pos:
             snowflake_action((current_pos["x"] + OFF_X, current_pos["y"] + OFF_Y, True))
             return True
 

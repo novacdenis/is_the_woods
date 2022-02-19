@@ -23,7 +23,7 @@ class Game:
         self.start_game()
 
     def detect_snowflake(self):
-        snowflake = find_snowflake_click_pos(self.start_time)
+        find_snowflake_click_pos(self.start_time)
 
     def detect_monsters(self):
         middle_mon = check_middle_monster()
