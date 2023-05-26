@@ -4,7 +4,7 @@ import keyboard
 import pyautogui
 import mouse
 import json
-from utils import clear_onsole
+from utils import clear_console
 from bot.snowflake import find_snowflake_click_pos
 from bot.middle_monster import check_middle_monster, middle_monster_action
 from bot.left_monster import check_left_monster, left_monster_action
@@ -32,12 +32,12 @@ class Game:
         left_mon = check_left_monster()
 
         if middle_mon:
-            self.actions.append({"prt": LOW, "fn": middle_monster_action})
+            self.actions.append({"priority": LOW, "fn": middle_monster_action})
         if left_mon:
-            self.actions.append({"prt": MEDIUM, "fn": left_monster_action})
+            self.actions.append({"priority": MEDIUM, "fn": left_monster_action})
 
     def start_game(self):
-        clear_onsole()
+        clear_console()
 
         print("Press 's' to start game or press 'q' to exit")
 
@@ -78,7 +78,7 @@ class Game:
                     self.analyze_screen()
 
     def start_actions(self):
-        sorted_action = sorted(self.actions, key=lambda i: i["prt"])
+        sorted_action = sorted(self.actions, key=lambda i: i["priority"])
 
         for action in sorted_action:
             action["fn"]()
